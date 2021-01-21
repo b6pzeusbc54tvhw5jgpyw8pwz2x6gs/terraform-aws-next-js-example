@@ -1,0 +1,31 @@
+{
+  "name": "@dealmore/terraform-next-proxy",
+  "version": "0.4.0",
+  "description": "Proxy module for AWS Next.js Terraform module.",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "homepage": "https://registry.terraform.io/modules/dealmore/next-js/aws",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dealmore/terraform-next.js.git",
+    "directory": "packages/proxy"
+  },
+  "scripts": {
+    "build": "funny build -e aws-sdk src/handler.ts dist.zip",
+    "prepack": "cp ../../LICENSE ./",
+    "postpack": "rm ./LICENSE"
+  },
+  "dependencies": {
+    "@vercel/routing-utils": "^1.9.1",
+    "node-fetch": "^2.6.1",
+    "pcre-to-regexp": "^1.1.0"
+  },
+  "devDependencies": {
+    "@dealmore/funny": "^0.3.2",
+    "@types/aws-lambda": "^8.10.56",
+    "@types/node-fetch": "^2.5.7"
+  },
+  "files": [
+    "dist.zip"
+  ]
+}
