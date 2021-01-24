@@ -5,10 +5,12 @@
 process.chdir(__dirname);
 
 import { RequestListener, Server } from 'http';
-import { Bridge } from './bridge';
 import url from 'url'
-// eslint-disable-next-line
 
+import { Bridge } from './bridge';
+
+// ./build-info.js file is generated at build time
+import {pages, escapedBuildId, dynamicRoutes} from './build-info'
 
 // https://github.com/dealmore/vercel/blob/master/packages/now-next/src/index.ts#L1515
 // delete some i18n codes
@@ -22,14 +24,8 @@ const pageHandler: RequestListener = function(req, res) {
 
   try {
     // TODO: create new file
-    const pages = {
-      '/p-get-initial-props': () => require('./pages/p-get-initial-props.js'),
-      '/p-get-server-side-props': () => require('./pages/p-get-server-side-props.js'),
-      '/p-get-static-props': () => require('./pages/p-get-static-props.js')
-    }
-
     let toRender = req.headers['x-nextjs-page']
-    if (Array.isArray(toRender)) return res.end('x-nextjs-page must be string')
+    if (Array.isArray(toRender)) return res.end('x-nextjs-page should not be Array')
 
     if (!toRender) {
       try {
@@ -43,10 +39,10 @@ const pageHandler: RequestListener = function(req, res) {
     }
 
     let currentPage = pages[toRender]
-    if ( toRender && !currentPage) {
+    if (!currentPage) {
       if (toRender.includes('/_next/data')) {
         toRender = toRender
-          .replace(new RegExp('/_next/data/${escapedBuildId}/'), '/')
+          .replace(new RegExp(`/_next/data/${escapedBuildId}/`), '/')
           .replace(/\\.json$/, '')
         toRender = stripLocalePath(toRender) || '/index'
         currentPage = pages[toRender]
@@ -54,18 +50,6 @@ const pageHandler: RequestListener = function(req, res) {
       if (!currentPage) {
         // for prerendered dynamic routes (/blog/post-1) we need to
         // find the match since it won't match the page directly
-
-        // TODO: create new file for dynamicRoutes
-        const dynamicRoutes = []
-        /*
-        const dynamicRoutes = ${JSON.stringify(
-          completeDynamicRoutes.map(route => ({
-            src: route.src,
-            dest: route.dest,
-          }))
-        )}
-        */
-
         for (const route of dynamicRoutes) {
           const matcher = new RegExp(route.src)
           if (matcher.test(toRender)) {
@@ -102,4 +86,4 @@ const server = new Server(pageHandler);
 const bridge = new Bridge(server);
 bridge.listen();
 
-exports.launcher = bridge.launcher;
+exports.handler = bridge.launcher;

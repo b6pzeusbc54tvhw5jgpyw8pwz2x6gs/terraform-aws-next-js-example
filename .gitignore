@@ -135,7 +135,7 @@ override.tf.json
 /.next/
 /.next-tf/
 /.serverless_nextjs/
+/build/
 /node_modules/
 
 .DS_Store
-
