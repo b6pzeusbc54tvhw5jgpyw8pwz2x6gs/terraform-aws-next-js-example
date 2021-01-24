@@ -34,9 +34,10 @@ const replaceToEscape = (str: string) => {
 }
 
 const run = async () => {
-  console.log('start next build')
+  console.log('===================== start next build')
   await builder.build(true)
 
+  console.log('===================== generate proxyConfig.json')
   const alm = require('../.serverless_nextjs/api-lambda/manifest.json')
   const dlm = require('../.serverless_nextjs/default-lambda/manifest.json')
   const dlpm = require('../.serverless_nextjs/default-lambda/prerender-manifest.json')
