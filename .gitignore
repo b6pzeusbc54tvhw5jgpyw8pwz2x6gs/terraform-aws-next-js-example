@@ -134,6 +134,7 @@ override.tf.json
 /backend.hcl
 /.next/
 /.next-tf/
+/.serverless_nextjs/
 /node_modules/
 
 .DS_Store
