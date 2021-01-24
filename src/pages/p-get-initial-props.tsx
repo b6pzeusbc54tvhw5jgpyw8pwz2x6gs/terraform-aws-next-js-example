@@ -1,8 +1,9 @@
+import { NextPageContext } from 'next'
 import Link from 'next/Link'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
+export default function PageWithGetInitialProps() {
   return (
     <div className={styles.container}>
       <Head>
@@ -46,4 +47,8 @@ export default function Home() {
       </footer>
     </div>
   )
+}
+
+PageWithGetInitialProps.getInitialProps = async (ctx: NextPageContext) => {
+  return {hello: 'from-get-initial-props'}
 }

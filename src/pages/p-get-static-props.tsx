@@ -1,8 +1,9 @@
+import { GetStaticProps } from 'next'
 import Link from 'next/Link'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
+export default function PageWithGetStaticProps() {
   return (
     <div className={styles.container}>
       <Head>
@@ -46,4 +47,8 @@ export default function Home() {
       </footer>
     </div>
   )
+}
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  return {props: { hello: 'from-get-static-props'}}
 }

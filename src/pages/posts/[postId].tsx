@@ -1,8 +1,14 @@
+import { NextPage } from 'next'
 import Link from 'next/Link'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import styles from '../../styles/Home.module.css'
 
-export default function Home() {
+interface Props {
+  postId: string
+}
+const PostPage:NextPage<Props> = (props) => {
+  const {postId} = props
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,12 +18,11 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome to PostPage
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
+          postId: {postId}
         </p>
 
         <div>
@@ -47,3 +52,11 @@ export default function Home() {
     </div>
   )
 }
+
+PostPage.getInitialProps = async (ctx) => {
+  const {postId} = ctx.query
+
+  return { postId: Array.isArray(postId) ? postId[0] : postId }
+}
+
+export default PostPage

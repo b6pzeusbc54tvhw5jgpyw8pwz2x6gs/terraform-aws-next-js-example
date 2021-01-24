@@ -1,8 +1,9 @@
 import Link from 'next/Link'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import { GetServerSideProps } from 'next'
 
-export default function Home() {
+export default function PageWithGetStaticProps() {
   return (
     <div className={styles.container}>
       <Head>
@@ -46,4 +47,8 @@ export default function Home() {
       </footer>
     </div>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return {props: { hello: 'from-get-server-side-props'}}
 }
