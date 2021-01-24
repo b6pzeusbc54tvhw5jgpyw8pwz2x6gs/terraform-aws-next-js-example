@@ -4,32 +4,33 @@
 // launcher. This mimics `yarn workspace run` behavior.
 process.chdir(__dirname);
 
-if (!process.env.NODE_ENV) {
-  const region = process.env.VERCEL_REGION || process.env.NOW_REGION;
-  process.env.NODE_ENV = region === 'dev1' ? 'development' : 'production';
-}
-
-import { Server } from 'http';
+import { RequestListener, Server } from 'http';
 import { Bridge } from './bridge';
 import url from 'url'
 // eslint-disable-next-line
 
 
-
-
 // https://github.com/dealmore/vercel/blob/master/packages/now-next/src/index.ts#L1515
 // delete some i18n codes
 
-function stripLocalePath(pathname) { return pathname }
+function stripLocalePath(pathname: string) { return pathname }
 
-const pageHandler = function(req, res) {
+const pageHandler: RequestListener = function(req, res) {
+  console.log('------------- I got request:')
+  console.log('req.url: ' + req.url)
+  console.log('req.headers[x-nextjs-page]: ' + req.headers['x-nextjs-page'])
 
   try {
-
     // TODO: create new file
-    const pages = pathToJsMap
+    const pages = {
+      '/p-get-initial-props': () => require('./pages/p-get-initial-props.js'),
+      '/p-get-server-side-props': () => require('./pages/p-get-server-side-props.js'),
+      '/p-get-static-props': () => require('./pages/p-get-static-props.js')
+    }
 
     let toRender = req.headers['x-nextjs-page']
+    if (Array.isArray(toRender)) return res.end('x-nextjs-page must be string')
+
     if (!toRender) {
       try {
         const { pathname } = url.parse(req.url)
@@ -55,7 +56,7 @@ const pageHandler = function(req, res) {
         // find the match since it won't match the page directly
 
         // TODO: create new file for dynamicRoutes
-        const dynamicRoutes
+        const dynamicRoutes = []
         /*
         const dynamicRoutes = ${JSON.stringify(
           completeDynamicRoutes.map(route => ({
@@ -91,10 +92,6 @@ const pageHandler = function(req, res) {
     throw err
   }
 }
-
-
-
-
 
 
 

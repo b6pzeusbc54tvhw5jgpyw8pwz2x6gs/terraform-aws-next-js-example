@@ -1,16 +1,8 @@
 /// <reference types="node" />
+// https://github.com/dealmore/terraform-aws-next-js/tree/main/packages/node-bridge/src
 import { AddressInfo } from 'net';
-import {
-  APIGatewayProxyEventV2,
-  APIGatewayProxyStructuredResultV2,
-  Context,
-} from 'aws-lambda';
-import {
-  Server,
-  IncomingHttpHeaders,
-  OutgoingHttpHeaders,
-  request,
-} from 'http';
+import { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2, Context } from 'aws-lambda';
+import { Server, IncomingHttpHeaders, OutgoingHttpHeaders, request } from 'http';
 
 export interface NowProxyRequest {
   method: string;
@@ -29,10 +21,7 @@ export interface NowProxyResponse {
 interface ServerLike {
   timeout?: number;
   listen: (
-    opts: {
-      host?: string;
-      port?: number;
-    },
+    opts: { host?: string, port?: number },
     callback: (this: Server | null) => void
   ) => Server | void;
 }
@@ -49,14 +38,10 @@ process.on('unhandledRejection', (err) => {
   process.exit(1);
 });
 
-function normalizeAPIGatewayProxyEvent(
-  event: APIGatewayProxyEventV2
-): NowProxyRequest {
+function normalizeAPIGatewayProxyEvent(event: APIGatewayProxyEventV2): NowProxyRequest {
   let bodyBuffer: Buffer | null;
   const {
-    requestContext: {
-      http: { method },
-    },
+    requestContext: { http: { method } },
     rawQueryString,
     headers = {},
     body,
@@ -92,13 +77,9 @@ function normalizeAPIGatewayProxyEvent(
     bodyBuffer = Buffer.alloc(0);
   }
 
-  return {
-    method,
-    path: parameterizedPath,
-    headers,
-    body: bodyBuffer,
-  };
+  return { method, path: parameterizedPath, headers, body: bodyBuffer };
 }
+
 export class Bridge {
   private server: ServerLike | null;
   private listening: Promise<AddressInfo>;
@@ -130,9 +111,7 @@ export class Bridge {
 
   listen() {
     const { server, resolveListening } = this;
-    if (!server) {
-      throw new Error('Server has not been set!');
-    }
+    if (!server) throw new Error('Server has not been set!');
 
     if (typeof server.timeout === 'number' && server.timeout > 0) {
       // Disable timeout (usually 2 minutes until Node 13).
@@ -140,33 +119,20 @@ export class Bridge {
       server.timeout = 0;
     }
 
-    return server.listen(
-      {
-        host: '127.0.0.1',
-        port: 0,
-      },
-      function listeningCallback() {
-        if (!this || typeof this.address !== 'function') {
-          throw new Error(
-            'Missing server.address() function on `this` in server.listen()'
-          );
-        }
-
-        const addr = this.address();
-
-        if (!addr) {
-          throw new Error('`server.address()` returned `null`');
-        }
-
-        if (typeof addr === 'string') {
-          throw new Error(
-            `Unexpected string for \`server.address()\`: ${addr}`
-          );
-        }
-
-        resolveListening(addr);
+    return server.listen({ host: '127.0.0.1', port: 0 }, function listeningCallback() {
+      if (!this || typeof this.address !== 'function') {
+        throw new Error( 'Missing server.address() function on `this` in server.listen()');
       }
-    );
+
+      const addr = this.address();
+      if (!addr) throw new Error('`server.address()` returned `null`');
+
+      if (typeof addr === 'string') {
+        throw new Error( `Unexpected string for \`server.address()\`: ${addr}`);
+      }
+
+      resolveListening(addr);
+    });
   }
 
   async launcher(
@@ -204,17 +170,12 @@ export class Bridge {
             const headerValue = response.headers[headerKey];
 
             // 'content-length' is calculated by API Gateway
-            if (headerKey === 'content-length') {
-              continue;
-            }
+            if (headerKey === 'content-length') continue;
 
             // Filter out cookies
             if (headerKey === 'set-cookie' && headerValue) {
-              if (typeof headerValue === 'string') {
-                cookies.push(headerValue);
-              } else {
-                cookies.push(...headerValue);
-              }
+              if (typeof headerValue === 'string') cookies.push(headerValue);
+              else cookies.push(...headerValue);
 
               continue;
             }
@@ -254,19 +215,13 @@ export class Bridge {
 
       for (const [name, value] of Object.entries(headers)) {
         if (value === undefined) {
-          console.error(
-            'Skipping HTTP request header %j because value is undefined',
-            name
-          );
+          console.error( 'Skipping HTTP request header %j because value is undefined', name);
           continue;
         }
         try {
           req.setHeader(name, value);
         } catch (err) {
-          console.error(
-            'Skipping HTTP request header: %j',
-            `${name}: ${value}`
-          );
+          console.error( 'Skipping HTTP request header: %j', `${name}: ${value}`);
           console.error(err.message);
         }
       }
