@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "ts-node cicd-tool/build.ts",
+    "build": "next build",
+    "build2": "ts-node cicd-tool/build.ts",
     "start": "next start"
   },
   "dependencies": {

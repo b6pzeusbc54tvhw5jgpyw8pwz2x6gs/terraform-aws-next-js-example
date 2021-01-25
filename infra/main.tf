@@ -16,7 +16,7 @@ module "tf-next" {
   // source = "github.com/b6pzeusbc54tvhw5jgpyw8pwz2x6gs/terraform-aws-next-js"
   // for local test
   source = "../../terraform-aws-next-js"
-  next_tf_dir = "../.n"
+  name_prefix = "tf-next-test"
 }
 
 output "domain" {
