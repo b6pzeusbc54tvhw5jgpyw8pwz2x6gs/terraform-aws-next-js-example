@@ -17,8 +17,7 @@ export default function PageWithGetStaticProps() {
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
+          This is p-get-server-side-props.tsx
         </p>
 
         <div>
@@ -50,5 +49,6 @@ export default function PageWithGetStaticProps() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  console.log('in getServerSideProps')
   return {props: { hello: 'from-get-server-side-props'}}
 }

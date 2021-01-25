@@ -17,8 +17,7 @@ export default function PageWithGetInitialProps() {
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
+          This is p-get-initial-props.tsx
         </p>
 
         <div>
