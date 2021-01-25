@@ -13,3 +13,4 @@ export const pages = {
 export const dynamicRoutes = [
   {"src":"^/posts/(?<postId>[^/]+?)(?:/)?$","dest":"/posts/[postId]?postId=$postId"},
 ]
+
